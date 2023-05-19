@@ -13,8 +13,9 @@ class FileInputContent(QDMNodeContentWidget):
     def initUI(self):
         self.filepath = "dataset/carspeed.csv"
         self.lbl = QLabel("Select a file", self)
-        self.lbl.setAlignment(Qt.AlignLeft)
         self.lbl.setObjectName(self.node.content_label_objname)
+        self.lbl.wordWrap = True
+    
 
     def serialize(self):
         res = super().serialize()
@@ -22,8 +23,9 @@ class FileInputContent(QDMNodeContentWidget):
         return res
 
     def setupFilePath(self):
-        print('updated')
-        self.filepath = "dataset/carspeed.csv"
+        print('updated', self.fileBrowser.selectedFiles()[0])
+        self.filepath = self.fileBrowser.selectedFiles()[0]
+        self.lbl.setText(f'{self.filepath.split("/")[-1]}')
 
     def deserialize(self, data, hashmap={}):
         res = super().deserialize(data, hashmap)
@@ -38,8 +40,6 @@ class FileInputContent(QDMNodeContentWidget):
     def showFileDialog(self):
         self.fileBrowser = QFileDialog(self)
         self.fileBrowser.setFileMode(QFileDialog.AnyFile)
-        self.fileBrowser.setAcceptMode(QFileDialog.AcceptOpen)
-        self.fileBrowser.setOption(QFileDialog.DontUseNativeDialog, True)
         self.fileBrowser.fileSelected.connect(self.setupFilePath)
         self.fileBrowser.show()
 
@@ -58,10 +58,8 @@ class MlnodeBrowser(MlNode):
     def initInnerClasses(self):
         self.content = FileInputContent(self)
         self.grNode = MlGraphicsNode(self)
-        self.grNode.height = 200
-        self.grNode.mouseDoubleClickEvent(self.content.showFileDialog())
-
-        self.content.fileBrowser.show()
+        self.grNode.height = 100
+      
 
     def evalImplementation(self):
         self.value = self.content.filepath
@@ -69,6 +67,7 @@ class MlnodeBrowser(MlNode):
         self.markInvalid(False)
         self.markDescendantsInvalid(False)
         self.markDescendantsDirty()
-        self.content.lbl.setText(f'{self.content.filepath}')
+        self.content.lbl.setText(f'{self.content.filepath.split("/")[-1]}')
         self.grNode.setToolTip("Selected File for Training")
-        print(f'{self.content.filepath}')
+        # show dialog
+        self.content.showFileDialog()
