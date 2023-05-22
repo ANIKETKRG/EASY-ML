@@ -27,7 +27,7 @@ class MlNode_LinearRegression(MlNode):
         regressor = LinearRegression()
         regressor.fit(X_train, y_train)
         m = self.create_metrics_dict(regressor, X_test, y_test)
-        self.content.wdg_label.setText(f"Linear Regression\nmse: {m['Mean squared error']}\naccuracy: {m['Coefficient of determination']} ")
+        self.content_label=f"Linear Regression\nmse: {m['Mean squared error']}\naccuracy: {m['Coefficient of determination']} "
         return regressor
     
     def evalImplementation(self):
