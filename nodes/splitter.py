@@ -14,7 +14,7 @@ class MlNode_Splitter(MlNode):
 
     # take filepath as input
     def __init__(self, scene):
-        super().__init__(scene, inputs=[1], outputs=[2,2,2,2])
+        super().__init__(scene, inputs=[1], outputs=[3])
         self.eval()
     
     def evalOperation(self, filepath):
@@ -24,7 +24,7 @@ class MlNode_Splitter(MlNode):
         X = df.iloc[:, :-1].values
         y = df.iloc[:, -1].values
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-        return X_train, X_test, y_train, y_test
+        return[X_train, X_test, y_train, y_test]
     
     def evalImplementation(self):
         val = self.evalOperation(self.getInput(0).eval())

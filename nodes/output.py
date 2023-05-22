@@ -25,6 +25,8 @@ class MlNode_Output(MlNode):
     def initInnerClasses(self):
         self.content = MlOutputContent(self)
         self.grNode = MlGraphicsNode(self)
+        self.grNode.height = 120
+        self.grNode.width = 120
 
     def evalImplementation(self):
         input_node = self.getInput(0)
