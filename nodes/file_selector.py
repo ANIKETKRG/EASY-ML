@@ -11,11 +11,13 @@ from nodeeditor.utils import dumpException
 
 class FileInputContent(QDMNodeContentWidget):
     def initUI(self):
-        self.filepath = "dataset/carspeed.csv"
         self.lbl = QLabel("Select a file", self)
         self.lbl.setObjectName(self.node.content_label_objname)
         self.lbl.wordWrap = True
-    
+        self.lbl.setMinimumWidth(250)
+        self.filepath = "dataset/carspeed.csv"
+        self.is_file_selected = False
+        print(f'1 {self.filepath}')
 
     def serialize(self):
         res = super().serialize()
@@ -24,8 +26,11 @@ class FileInputContent(QDMNodeContentWidget):
 
     def setupFilePath(self):
         print('updated', self.fileBrowser.selectedFiles()[0])
-        self.filepath = self.fileBrowser.selectedFiles()[0]
         self.lbl.setText(f'{self.filepath.split("/")[-1]}')
+        self.filepath = self.fileBrowser.selectedFiles()[0]
+        self.is_file_selected = True
+        print(f'2 {self.filepath}')
+       
 
     def deserialize(self, data, hashmap={}):
         res = super().deserialize(data, hashmap)
@@ -62,12 +67,18 @@ class MlnodeBrowser(MlNode):
       
 
     def evalImplementation(self):
-        self.value = self.content.filepath
-        self.markDirty(False)
-        self.markInvalid(False)
-        self.markDescendantsInvalid(False)
-        self.markDescendantsDirty()
-        self.content.lbl.setText(f'{self.content.filepath.split("/")[-1]}')
-        self.grNode.setToolTip("Selected File for Training")
-        # show dialog
-        self.content.showFileDialog()
+        if not self.content.is_file_selected:
+            self.content.showFileDialog()
+        else:
+            self.value = self.content.filepath
+            self.markDirty(False)
+            self.markInvalid(False)
+            self.markDescendantsInvalid(False)
+            self.markDescendantsDirty()
+            print(f'3 {self.content.filepath}')
+            self.content.lbl.setText(f'{self.content.filepath.split("/")[-1]}')
+            self.grNode.setToolTip("Selected File for Training")
+            self.evalChildren()
+        
+
+    
